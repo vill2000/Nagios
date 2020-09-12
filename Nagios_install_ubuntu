@@ -1,0 +1,60 @@
+* Prerequisites
+	sudo apt-get update
+	sudo apt-get install -y autoconf gcc libc6 make wget unzip apache2 php libapache2-mod-php7.2 libgd-dev
+* Downloading the Source
+	cd /tmp
+	wget -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.5.tar.gz
+	tar xzf nagioscore.tar.gz
+* Compile the source
+	cd /tmp/nagioscore-nagios-4.4.5/
+	sudo ./configure --with-httpd-conf=/etc/apache2/sites-enabled
+	sudo make all
+* Create User And Group
+	sudo make install-groups-users
+	sudo usermod -a -G nagios www-data
+* Install Binaries
+	sudo make install
+* Install Service / Daemon
+	sudo make install-daemoninit
+* Install Command Mode
+	sudo make install-commandmode
+* Install Configuration Files
+	sudo make install-config
+* Install Apache Config Files
+	sudo make install-webconf
+	sudo a2enmod rewrite
+	sudo a2enmod cgi
+* Create nagiosadmin User Account
+	sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+* Start Apache Web Server
+	sudo systemctl restart apache2.service
+* Start Service / Daemon
+	sudo systemctl start nagios.service
+* Test Nagios
+	your-machine-ip-address/nagios
+	
+	
+======================================================================================================================
+This would get your Nagios server up and running on port 5666, but it will not be able to monitor any metrics.
+For this you will need to follow the below step where you will install the default plugins to monitor the metrics.
+======================================================================================================================
+* Install the pre-requisites.
+	sudo apt-get install -y autoconf gcc libc6 libmcrypt-dev make libssl-dev wget bc gawk dc build-essential snmp libnet-snmp-perl gettext
+* Change directory to /tmp	
+	cd /tmp
+* Download the plugins
+	wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz
+* Untar the plugins
+	tar zxf nagios-plugins.tar.gz
+* Change directory to the plugins	
+	cd nagios-plugins-release-2.2.1/
+* Execute the setup script
+	sudo ./tools/setup
+* Compile the source
+	sudo ./configure
+* Install the binaries
+	sudo make
+	sudo make install
+* Restart nagios service
+	sudo systemctl restart nagios.service
+
